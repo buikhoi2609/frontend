@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý bán hàng</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>THUY TUAN STORE</h2>
+
+        <ul>
+            <li class="active">Quản lý sản phẩm</li>
+            <li>Quản lý danh mục</li>
+            <li>Quản lý nhà cung cấp</li>
+            <li>Quản lý đơn hàng</li>
+        </ul>
+    </div>
+
+    <div class="main">
+
+        <header>
+            <h1>Quản lý sản phẩm</h1>
+            <p>Hệ thống quản lý bán hàng cửa hàng đồ gia dụng</p>
+        </header>
+
+        <section class="toolbar">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Tìm kiếm sản phẩm..."
+            >
+
+            <button class="btn-add" onclick="openForm()">
+                + Thêm sản phẩm
+            </button>
+        </section>
+
+        <section class="table-container">
+
+            <h2>Danh sách sản phẩm</h2>
+
+            <p id="message"></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã SP</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Mã DM</th>
+                        <th>Đơn vị</th>
+                        <th>Giá nhập</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="productList">
+                    <tr>
+                        <td colspan="9">Đang tải dữ liệu...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+    </div>
+
+    <!-- Form thêm sản phẩm -->
+    <div id="productModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2>Thêm sản phẩm</h2>
+                <button class="btn-close" onclick="closeForm()">×</button>
+            </div>
+
+            <form id="productForm">
+
+                <label>Tên sản phẩm</label>
+                <input type="text" id="tenSP" required>
+
+                <label>Mã danh mục</label>
+                <input type="number" id="maDM" min="1" required>
+
+                <label>Mã nhà cung cấp</label>
+                <input type="number" id="maNCC" min="1">
+
+                <label>Đơn vị tính</label>
+                <input type="text" id="donViTinh">
+
+                <label>Giá nhập</label>
+                <input type="number" id="giaNhap" min="0" step="0.01" required>
+
+                <label>Giá bán</label>
+                <input type="number" id="giaBan" min="0" step="0.01" required>
+
+                <label>Số lượng tồn</label>
+                <input type="number" id="soLuongTon" min="0" required>
+
+                <label>Số lượng cảnh báo</label>
+                <input type="number" id="soLuongCanhBao" min="0">
+
+                <label>Hình ảnh (đường dẫn)</label>
+                <input type="text" id="hinhAnh">
+
+                <label>Mô tả</label>
+                <textarea id="moTa"></textarea>
+
+                <button type="submit" class="btn-save">
+                    Lưu sản phẩm
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
