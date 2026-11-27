@@ -4,107 +4,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý đơn hàng</title>
+
+    <title>Quản lý đơn hàng - Thuy Tuan Store</title>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <div class="sidebar">
-        <h2>THUY TUAN STORE</h2>
+    <!-- THANH MENU -->
+    <aside class="sidebar">
+        <div class="brand">
+            <h2>THUY TUAN STORE</h2>
+            <p>Hệ thống quản lý bán hàng</p>
+        </div>
 
-        <ul>
-            <li onclick="location.href='index.html'">Quản lý sản phẩm</li>
-            <li onclick="location.href='danhmuc.html'">Quản lý danh mục</li>
-            <li onclick="location.href='nhacungcap.html'">Quản lý nhà cung cấp</li>
-            <li class="active" onclick="location.href='donhang.html'">Quản lý đơn hàng</li>
+        <ul class="menu">
+            <li onclick="location.href='index.html'">
+                <span>📦</span> Quản lý sản phẩm
+            </li>
+
+            <li onclick="location.href='danhmuc.html'">
+                <span>📂</span> Quản lý danh mục
+            </li>
+
+            <li onclick="location.href='nhacungcap.html'">
+                <span>🏭</span> Quản lý nhà cung cấp
+            </li>
+
+            <li class="active"
+                onclick="location.href='donhang.html'">
+                <span>🧾</span> Quản lý đơn hàng
+            </li>
         </ul>
-    </div>
+    </aside>
 
-    <div class="main">
 
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="main">
+
+        <!-- HEADER -->
         <header class="header-top">
-            <div>
+            <div class="header-title">
                 <h1>Quản lý đơn hàng</h1>
-                <p>Hệ thống quản lý bán hàng cửa hàng đồ gia dụng</p>
+                <p>Theo dõi đơn bán hàng, trạng thái và doanh thu</p>
             </div>
 
             <div class="user-box">
-                <span id="userName"></span>
-                <button type="button" class="btn-logout" id="btnLogout">Đăng xuất</button>
+                <span id="userName">Xin chào!</span>
+
+                <button
+                    type="button"
+                    class="btn-logout"
+                    id="btnLogout">
+                    Đăng xuất
+                </button>
             </div>
         </header>
 
-        <section class="toolbar">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Tìm kiếm đơn hàng..."
-            >
 
-            <button class="btn-add" onclick="openForm()">
+        <!-- THANH CÔNG CỤ -->
+        <section class="toolbar">
+
+            <div class="search-box">
+                <span>🔍</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Tìm kiếm theo mã đơn hoặc mã nhân viên..."
+                >
+            </div>
+
+            <button
+                type="button"
+                class="btn-add"
+                onclick="openAddForm()">
                 + Thêm đơn hàng
             </button>
+
         </section>
 
+
+        <!-- DANH SÁCH ĐƠN HÀNG -->
         <section class="table-container">
 
-            <h2>Danh sách đơn hàng</h2>
+            <div class="table-header">
+                <div>
+                    <h2>Danh sách đơn hàng</h2>
+                    <p>Thông tin các đơn hàng đã lập</p>
+                </div>
+            </div>
 
-            <p id="message"></p>
+            <p id="message" class="message"></p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mã ĐH</th>
-                        <th>Mã NV</th>
-                        <th>Ngày đặt</th>
-                        <th>Tổng tiền</th>
-                        <th>Phương thức TT</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã ĐH</th>
+                            <th>Mã NV</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Phương thức TT</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
 
-                <tbody id="orderList">
-                    <tr>
-                        <td colspan="7">Đang tải dữ liệu...</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody id="orderList">
+                        <tr>
+                            <td colspan="7" class="empty-data">
+                                Đang tải dữ liệu...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
         </section>
 
-    </div>
+    </main>
 
-    <!-- Form thêm đơn hàng -->
+
+    <!-- MODAL THÊM / SỬA ĐƠN HÀNG -->
     <div id="orderModal" class="modal">
 
         <div class="modal-content">
 
+            <!-- TIÊU ĐỀ MODAL -->
             <div class="modal-header">
-                <h2>Thêm đơn hàng</h2>
-                <button class="btn-close" onclick="closeForm()">×</button>
+
+                <div>
+                    <h2>THÊM ĐƠN HÀNG</h2>
+                    <p>Nhập đầy đủ thông tin đơn hàng</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    onclick="closeForm()">
+                    ×
+                </button>
+
             </div>
 
+
+            <!-- FORM -->
             <form id="orderForm">
 
-                <label>Mã nhân viên</label>
-                <input type="number" id="maNV" min="1" required>
+                <div class="form-grid">
 
-                <label>Tổng tiền</label>
-                <input type="number" id="tongTien" min="0" step="0.01" required>
+                    <div class="form-group">
+                        <label for="maNV">
+                            Mã nhân viên <span>*</span>
+                        </label>
 
-                <label>Phương thức thanh toán</label>
-                <input type="text" id="phuongThucThanhToan" placeholder="Tiền mặt, chuyển khoản...">
+                        <input
+                            type="number"
+                            id="maNV"
+                            min="1"
+                            placeholder="Nhập mã nhân viên"
+                            required
+                        >
+                    </div>
 
-                <label>Trạng thái</label>
-                <input type="text" id="trangThai" placeholder="Hoàn thành">
 
-                <button type="submit" class="btn-save">
-                    Lưu đơn hàng
-                </button>
+                    <div class="form-group">
+                        <label for="tongTien">
+                            Tổng tiền (VNĐ) <span>*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            id="tongTien"
+                            min="0"
+                            step="0.01"
+                            placeholder="Nhập tổng tiền"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="phuongThucThanhToan">
+                            Phương thức thanh toán
+                        </label>
+
+                        <input
+                            type="text"
+                            id="phuongThucThanhToan"
+                            placeholder="Tiền mặt, chuyển khoản..."
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="trangThai">
+                            Trạng thái
+                        </label>
+
+                        <select id="trangThai">
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Đang xử lý">Đang xử lý</option>
+                            <option value="Đã hủy">Đã hủy</option>
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <!-- NÚT CHỨC NĂNG -->
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        onclick="closeForm()">
+                        Hủy
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+                        Lưu đơn hàng
+                    </button>
+
+                </div>
 
             </form>
 
@@ -112,6 +238,8 @@
 
     </div>
 
+
+    <!-- JAVASCRIPT -->
     <script src="js/auth.js"></script>
     <script src="js/donhang.js"></script>
 

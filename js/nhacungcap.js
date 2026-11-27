@@ -4,6 +4,9 @@ const API_URL = "http://localhost:8081/api/nhacungcap";
 // Chưa đăng nhập thì đẩy về trang login ngay
 requireAuth();
 
+// Lưu mã nhà cung cấp đang sửa
+let editingSupplierId = null;
+
 // Hiển thị tên người dùng đang đăng nhập + xử lý đăng xuất
 function initUserBox() {
     const user = getUser();
@@ -22,7 +25,7 @@ async function loadSuppliers() {
     const message = document.getElementById("message");
 
     supplierList.innerHTML =
-        '<tr><td colspan="7">Đang tải dữ liệu...</td></tr>';
+        '<tr><td colspan="7" class="empty-data">Đang tải dữ liệu...</td></tr>';
 
     message.textContent = "";
 
@@ -39,7 +42,7 @@ async function loadSuppliers() {
 
     } catch (error) {
         supplierList.innerHTML =
-            '<tr><td colspan="7">Không tải được dữ liệu</td></tr>';
+            '<tr><td colspan="7" class="empty-data">Không tải được dữ liệu</td></tr>';
 
         message.textContent =
             "Lỗi kết nối Backend: " + error.message;
@@ -52,7 +55,7 @@ function displaySuppliers(suppliers) {
 
     if (suppliers.length === 0) {
         supplierList.innerHTML =
-            '<tr><td colspan="7">Chưa có nhà cung cấp nào</td></tr>';
+            '<tr><td colspan="7" class="empty-data">Chưa có nhà cung cấp nào</td></tr>';
         return;
     }
 
@@ -85,6 +88,16 @@ function displaySuppliers(suppliers) {
 
         const actionCell = document.createElement("td");
 
+        // Nút Sửa
+        const editButton = document.createElement("button");
+        editButton.textContent = "Sửa";
+        editButton.className = "btn-edit";
+
+        editButton.addEventListener("click", () => {
+            editSupplier(supplier.maNCC);
+        });
+
+        // Nút Xóa
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Xóa";
         deleteButton.className = "btn-delete";
@@ -93,6 +106,7 @@ function displaySuppliers(suppliers) {
             deleteSupplier(supplier.maNCC);
         });
 
+        actionCell.appendChild(editButton);
         actionCell.appendChild(deleteButton);
         row.appendChild(actionCell);
 
@@ -105,12 +119,88 @@ function openForm() {
     document.getElementById("supplierModal").style.display = "flex";
 }
 
+function openAddForm() {
+
+    editingSupplierId = null;
+
+    document.getElementById("supplierForm").reset();
+
+    const modalTitle = document.querySelector("#supplierModal h2");
+
+    if (modalTitle) {
+        modalTitle.textContent = "THÊM NHÀ CUNG CẤP";
+    }
+
+    const submitButton = document.querySelector(
+        '#supplierForm button[type="submit"]'
+    );
+
+    if (submitButton) {
+        submitButton.textContent = "Lưu nhà cung cấp";
+    }
+
+    openForm();
+}
+
 // Đóng form
 function closeForm() {
     document.getElementById("supplierModal").style.display = "none";
 }
 
-// Thêm nhà cung cấp
+// ======================================
+// SỬA NHÀ CUNG CẤP
+// ======================================
+
+async function editSupplier(id) {
+
+    try {
+        const response = await authFetch(`${API_URL}/${id}`);
+
+        if (!response.ok) {
+            throw new Error("Không lấy được thông tin nhà cung cấp");
+        }
+
+        const supplier = await response.json();
+
+        editingSupplierId = id;
+
+        document.getElementById("tenNCC").value = supplier.tenNCC ?? "";
+        document.getElementById("dienThoai").value = supplier.dienThoai ?? "";
+        document.getElementById("email").value = supplier.email ?? "";
+        document.getElementById("diaChi").value = supplier.diaChi ?? "";
+
+        const trangThaiInput = document.getElementById("trangThai");
+
+        if (trangThaiInput) {
+            trangThaiInput.value = String(supplier.trangThai ?? true);
+        }
+
+        const modalTitle = document.querySelector("#supplierModal h2");
+
+        if (modalTitle) {
+            modalTitle.textContent = "SỬA NHÀ CUNG CẤP";
+        }
+
+        const submitButton = document.querySelector(
+            '#supplierForm button[type="submit"]'
+        );
+
+        if (submitButton) {
+            submitButton.textContent = "Lưu thay đổi";
+        }
+
+        openForm();
+
+    } catch (error) {
+        alert("Lỗi lấy thông tin nhà cung cấp: " + error.message);
+        console.error(error);
+    }
+}
+
+// ======================================
+// THÊM VÀ CẬP NHẬT NHÀ CUNG CẤP
+// ======================================
+
 document.getElementById("supplierForm")
     .addEventListener("submit", async function(event) {
 
@@ -121,12 +211,37 @@ document.getElementById("supplierForm")
             dienThoai: document.getElementById("dienThoai").value.trim(),
             email: document.getElementById("email").value.trim(),
             diaChi: document.getElementById("diaChi").value.trim(),
-            trangThai: true
+
+            trangThai: document.getElementById("trangThai")
+                ? document.getElementById("trangThai").value === "true"
+                : true
         };
 
+        if (!supplier.tenNCC) {
+            alert("Vui lòng nhập tên nhà cung cấp!");
+            return;
+        }
+
+        const isEditing = editingSupplierId !== null;
+
+        const url = isEditing
+            ? `${API_URL}/${editingSupplierId}`
+            : API_URL;
+
+        const method = isEditing ? "PUT" : "POST";
+
+        const submitButton = this.querySelector(
+            'button[type="submit"]'
+        );
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Đang lưu...";
+        }
+
         try {
-            const response = await authFetch(API_URL, {
-                method: "POST",
+            const response = await authFetch(url, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -135,10 +250,18 @@ document.getElementById("supplierForm")
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(errorText || "Không thể thêm nhà cung cấp");
+                throw new Error(
+                    errorText || "Không thể lưu nhà cung cấp"
+                );
             }
 
-            alert("Thêm nhà cung cấp thành công!");
+            if (isEditing) {
+                alert("Cập nhật nhà cung cấp thành công!");
+            } else {
+                alert("Thêm nhà cung cấp thành công!");
+            }
+
+            editingSupplierId = null;
 
             this.reset();
             closeForm();
@@ -146,7 +269,18 @@ document.getElementById("supplierForm")
             await loadSuppliers();
 
         } catch (error) {
-            alert("Lỗi thêm nhà cung cấp: " + error.message);
+            alert(
+                (isEditing ? "Lỗi cập nhật: " : "Lỗi thêm: ")
+                + error.message
+            );
+
+            console.error(error);
+
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = "Lưu nhà cung cấp";
+            }
         }
     });
 

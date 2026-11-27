@@ -4,6 +4,9 @@ const API_URL = "http://localhost:8081/api/donhang";
 // Chưa đăng nhập thì đẩy về trang login ngay
 requireAuth();
 
+// Lưu mã đơn hàng đang sửa
+let editingOrderId = null;
+
 // Hiển thị tên người dùng đang đăng nhập + xử lý đăng xuất
 function initUserBox() {
     const user = getUser();
@@ -22,7 +25,7 @@ async function loadOrders() {
     const message = document.getElementById("message");
 
     orderList.innerHTML =
-        '<tr><td colspan="7">Đang tải dữ liệu...</td></tr>';
+        '<tr><td colspan="7" class="empty-data">Đang tải dữ liệu...</td></tr>';
 
     message.textContent = "";
 
@@ -39,7 +42,7 @@ async function loadOrders() {
 
     } catch (error) {
         orderList.innerHTML =
-            '<tr><td colspan="7">Không tải được dữ liệu</td></tr>';
+            '<tr><td colspan="7" class="empty-data">Không tải được dữ liệu</td></tr>';
 
         message.textContent =
             "Lỗi kết nối Backend: " + error.message;
@@ -64,7 +67,7 @@ function displayOrders(orders) {
 
     if (orders.length === 0) {
         orderList.innerHTML =
-            '<tr><td colspan="7">Chưa có đơn hàng nào</td></tr>';
+            '<tr><td colspan="7" class="empty-data">Chưa có đơn hàng nào</td></tr>';
         return;
     }
 
@@ -90,6 +93,16 @@ function displayOrders(orders) {
 
         const actionCell = document.createElement("td");
 
+        // Nút Sửa
+        const editButton = document.createElement("button");
+        editButton.textContent = "Sửa";
+        editButton.className = "btn-edit";
+
+        editButton.addEventListener("click", () => {
+            editOrder(order.maDH);
+        });
+
+        // Nút Xóa
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Xóa";
         deleteButton.className = "btn-delete";
@@ -98,6 +111,7 @@ function displayOrders(orders) {
             deleteOrder(order.maDH);
         });
 
+        actionCell.appendChild(editButton);
         actionCell.appendChild(deleteButton);
         row.appendChild(actionCell);
 
@@ -110,12 +124,89 @@ function openForm() {
     document.getElementById("orderModal").style.display = "flex";
 }
 
+function openAddForm() {
+
+    editingOrderId = null;
+
+    document.getElementById("orderForm").reset();
+
+    const modalTitle = document.querySelector("#orderModal h2");
+
+    if (modalTitle) {
+        modalTitle.textContent = "THÊM ĐƠN HÀNG";
+    }
+
+    const submitButton = document.querySelector(
+        '#orderForm button[type="submit"]'
+    );
+
+    if (submitButton) {
+        submitButton.textContent = "Lưu đơn hàng";
+    }
+
+    openForm();
+}
+
 // Đóng form
 function closeForm() {
     document.getElementById("orderModal").style.display = "none";
 }
 
-// Thêm đơn hàng
+// ======================================
+// SỬA ĐƠN HÀNG
+// ======================================
+
+async function editOrder(id) {
+
+    try {
+        const response = await authFetch(`${API_URL}/${id}`);
+
+        if (!response.ok) {
+            throw new Error("Không lấy được thông tin đơn hàng");
+        }
+
+        const order = await response.json();
+
+        editingOrderId = id;
+
+        document.getElementById("maNV").value = order.maNV ?? "";
+        document.getElementById("tongTien").value = order.tongTien ?? "";
+
+        document.getElementById("phuongThucThanhToan").value =
+            order.phuongThucThanhToan ?? "";
+
+        const trangThaiInput = document.getElementById("trangThai");
+
+        if (trangThaiInput) {
+            trangThaiInput.value = order.trangThai ?? "Hoàn thành";
+        }
+
+        const modalTitle = document.querySelector("#orderModal h2");
+
+        if (modalTitle) {
+            modalTitle.textContent = "SỬA ĐƠN HÀNG";
+        }
+
+        const submitButton = document.querySelector(
+            '#orderForm button[type="submit"]'
+        );
+
+        if (submitButton) {
+            submitButton.textContent = "Lưu thay đổi";
+        }
+
+        openForm();
+
+    } catch (error) {
+        alert("Lỗi lấy thông tin đơn hàng: " + error.message);
+        console.error(error);
+    }
+}
+
+// ======================================
+// THÊM VÀ CẬP NHẬT ĐƠN HÀNG
+// ======================================
+
 document.getElementById("orderForm")
     .addEventListener("submit", async function(event) {
 
@@ -128,9 +219,36 @@ document.getElementById("orderForm")
             trangThai: document.getElementById("trangThai").value.trim() || "Hoàn thành"
         };
 
+        if (
+            !Number.isInteger(order.maNV) ||
+            order.maNV <= 0 ||
+            !Number.isFinite(order.tongTien) ||
+            order.tongTien < 0
+        ) {
+            alert("Vui lòng nhập mã nhân viên và tổng tiền hợp lệ!");
+            return;
+        }
+
+        const isEditing = editingOrderId !== null;
+
+        const url = isEditing
+            ? `${API_URL}/${editingOrderId}`
+            : API_URL;
+
+        const method = isEditing ? "PUT" : "POST";
+
+        const submitButton = this.querySelector(
+            'button[type="submit"]'
+        );
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Đang lưu...";
+        }
+
         try {
-            const response = await authFetch(API_URL, {
-                method: "POST",
+            const response = await authFetch(url, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -139,10 +257,16 @@ document.getElementById("orderForm")
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(errorText || "Không thể thêm đơn hàng");
+                throw new Error(errorText || "Không thể lưu đơn hàng");
             }
 
-            alert("Thêm đơn hàng thành công!");
+            if (isEditing) {
+                alert("Cập nhật đơn hàng thành công!");
+            } else {
+                alert("Thêm đơn hàng thành công!");
+            }
+
+            editingOrderId = null;
 
             this.reset();
             closeForm();
@@ -150,7 +274,18 @@ document.getElementById("orderForm")
             await loadOrders();
 
         } catch (error) {
-            alert("Lỗi thêm đơn hàng: " + error.message);
+            alert(
+                (isEditing ? "Lỗi cập nhật: " : "Lỗi thêm: ")
+                + error.message
+            );
+
+            console.error(error);
+
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = "Lưu đơn hàng";
+            }
         }
     });
 

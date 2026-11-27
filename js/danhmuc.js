@@ -4,6 +4,9 @@ const API_URL = "http://localhost:8081/api/danhmuc";
 // Chưa đăng nhập thì đẩy về trang login ngay
 requireAuth();
 
+// Lưu mã danh mục đang sửa
+let editingCategoryId = null;
+
 // Hiển thị tên người dùng đang đăng nhập + xử lý đăng xuất
 function initUserBox() {
     const user = getUser();
@@ -22,7 +25,7 @@ async function loadCategories() {
     const message = document.getElementById("message");
 
     categoryList.innerHTML =
-        '<tr><td colspan="4">Đang tải dữ liệu...</td></tr>';
+        '<tr><td colspan="4" class="empty-data">Đang tải dữ liệu...</td></tr>';
 
     message.textContent = "";
 
@@ -39,7 +42,7 @@ async function loadCategories() {
 
     } catch (error) {
         categoryList.innerHTML =
-            '<tr><td colspan="4">Không tải được dữ liệu</td></tr>';
+            '<tr><td colspan="4" class="empty-data">Không tải được dữ liệu</td></tr>';
 
         message.textContent =
             "Lỗi kết nối Backend: " + error.message;
@@ -52,7 +55,7 @@ function displayCategories(categories) {
 
     if (categories.length === 0) {
         categoryList.innerHTML =
-            '<tr><td colspan="4">Chưa có danh mục nào</td></tr>';
+            '<tr><td colspan="4" class="empty-data">Chưa có danh mục nào</td></tr>';
         return;
     }
 
@@ -75,6 +78,16 @@ function displayCategories(categories) {
 
         const actionCell = document.createElement("td");
 
+        // Nút Sửa
+        const editButton = document.createElement("button");
+        editButton.textContent = "Sửa";
+        editButton.className = "btn-edit";
+
+        editButton.addEventListener("click", () => {
+            editCategory(category.maDM);
+        });
+
+        // Nút Xóa
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Xóa";
         deleteButton.className = "btn-delete";
@@ -83,6 +96,7 @@ function displayCategories(categories) {
             deleteCategory(category.maDM);
         });
 
+        actionCell.appendChild(editButton);
         actionCell.appendChild(deleteButton);
         row.appendChild(actionCell);
 
@@ -95,12 +109,80 @@ function openForm() {
     document.getElementById("categoryModal").style.display = "flex";
 }
 
+function openAddForm() {
+
+    editingCategoryId = null;
+
+    document.getElementById("categoryForm").reset();
+
+    const modalTitle = document.querySelector("#categoryModal h2");
+
+    if (modalTitle) {
+        modalTitle.textContent = "THÊM DANH MỤC";
+    }
+
+    const submitButton = document.querySelector(
+        '#categoryForm button[type="submit"]'
+    );
+
+    if (submitButton) {
+        submitButton.textContent = "Lưu danh mục";
+    }
+
+    openForm();
+}
+
 // Đóng form
 function closeForm() {
     document.getElementById("categoryModal").style.display = "none";
 }
 
-// Thêm danh mục
+// ======================================
+// SỬA DANH MỤC
+// ======================================
+
+async function editCategory(id) {
+
+    try {
+        const response = await authFetch(`${API_URL}/${id}`);
+
+        if (!response.ok) {
+            throw new Error("Không lấy được thông tin danh mục");
+        }
+
+        const category = await response.json();
+
+        editingCategoryId = id;
+
+        document.getElementById("tenDM").value = category.tenDM ?? "";
+        document.getElementById("moTa").value = category.moTa ?? "";
+
+        const modalTitle = document.querySelector("#categoryModal h2");
+
+        if (modalTitle) {
+            modalTitle.textContent = "SỬA DANH MỤC";
+        }
+
+        const submitButton = document.querySelector(
+            '#categoryForm button[type="submit"]'
+        );
+
+        if (submitButton) {
+            submitButton.textContent = "Lưu thay đổi";
+        }
+
+        openForm();
+
+    } catch (error) {
+        alert("Lỗi lấy thông tin danh mục: " + error.message);
+        console.error(error);
+    }
+}
+
+// ======================================
+// THÊM VÀ CẬP NHẬT DANH MỤC
+// ======================================
+
 document.getElementById("categoryForm")
     .addEventListener("submit", async function(event) {
 
@@ -111,9 +193,31 @@ document.getElementById("categoryForm")
             moTa: document.getElementById("moTa").value.trim()
         };
 
+        if (!category.tenDM) {
+            alert("Vui lòng nhập tên danh mục!");
+            return;
+        }
+
+        const isEditing = editingCategoryId !== null;
+
+        const url = isEditing
+            ? `${API_URL}/${editingCategoryId}`
+            : API_URL;
+
+        const method = isEditing ? "PUT" : "POST";
+
+        const submitButton = this.querySelector(
+            'button[type="submit"]'
+        );
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Đang lưu...";
+        }
+
         try {
-            const response = await authFetch(API_URL, {
-                method: "POST",
+            const response = await authFetch(url, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -122,10 +226,18 @@ document.getElementById("categoryForm")
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(errorText || "Không thể thêm danh mục");
+                throw new Error(
+                    errorText || "Không thể lưu danh mục"
+                );
             }
 
-            alert("Thêm danh mục thành công!");
+            if (isEditing) {
+                alert("Cập nhật danh mục thành công!");
+            } else {
+                alert("Thêm danh mục thành công!");
+            }
+
+            editingCategoryId = null;
 
             this.reset();
             closeForm();
@@ -133,7 +245,18 @@ document.getElementById("categoryForm")
             await loadCategories();
 
         } catch (error) {
-            alert("Lỗi thêm danh mục: " + error.message);
+            alert(
+                (isEditing ? "Lỗi cập nhật: " : "Lỗi thêm: ")
+                + error.message
+            );
+
+            console.error(error);
+
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = "Lưu danh mục";
+            }
         }
     });
 

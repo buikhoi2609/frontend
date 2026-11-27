@@ -415,7 +415,7 @@ tbody tr:hover {
    FORM
 ================================ */
 
-#productForm {
+.modal-content form {
     padding: 24px 25px;
 }
 
@@ -446,6 +446,7 @@ tbody tr:hover {
 }
 
 .form-group input,
+.form-group select,
 .form-group textarea {
     width: 100%;
     padding: 11px 12px;
@@ -458,7 +459,8 @@ tbody tr:hover {
     transition: 0.2s;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     height: 42px;
 }
 
@@ -468,6 +470,7 @@ tbody tr:hover {
 }
 
 .form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
@@ -620,7 +623,7 @@ tbody tr:hover {
         max-height: 95vh;
     }
 
-    #productForm {
+    .modal-content form {
         padding: 18px;
     }
 

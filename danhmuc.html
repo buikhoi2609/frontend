@@ -4,98 +4,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý danh mục</title>
+
+    <title>Quản lý danh mục - Thuy Tuan Store</title>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <div class="sidebar">
-        <h2>THUY TUAN STORE</h2>
+    <!-- THANH MENU -->
+    <aside class="sidebar">
+        <div class="brand">
+            <h2>THUY TUAN STORE</h2>
+            <p>Hệ thống quản lý bán hàng</p>
+        </div>
 
-        <ul>
-            <li onclick="location.href='index.html'">Quản lý sản phẩm</li>
-            <li class="active" onclick="location.href='danhmuc.html'">Quản lý danh mục</li>
-            <li onclick="location.href='nhacungcap.html'">Quản lý nhà cung cấp</li>
-            <li onclick="location.href='donhang.html'">Quản lý đơn hàng</li>
+        <ul class="menu">
+            <li onclick="location.href='index.html'">
+                <span>📦</span> Quản lý sản phẩm
+            </li>
+
+            <li class="active"
+                onclick="location.href='danhmuc.html'">
+                <span>📂</span> Quản lý danh mục
+            </li>
+
+            <li onclick="location.href='nhacungcap.html'">
+                <span>🏭</span> Quản lý nhà cung cấp
+            </li>
+
+            <li onclick="location.href='donhang.html'">
+                <span>🧾</span> Quản lý đơn hàng
+            </li>
         </ul>
-    </div>
+    </aside>
 
-    <div class="main">
 
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="main">
+
+        <!-- HEADER -->
         <header class="header-top">
-            <div>
+            <div class="header-title">
                 <h1>Quản lý danh mục</h1>
-                <p>Hệ thống quản lý bán hàng cửa hàng đồ gia dụng</p>
+                <p>Phân loại nhóm sản phẩm</p>
             </div>
 
             <div class="user-box">
-                <span id="userName"></span>
-                <button type="button" class="btn-logout" id="btnLogout">Đăng xuất</button>
+                <span id="userName">Xin chào!</span>
+
+                <button
+                    type="button"
+                    class="btn-logout"
+                    id="btnLogout">
+                    Đăng xuất
+                </button>
             </div>
         </header>
 
-        <section class="toolbar">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Tìm kiếm danh mục..."
-            >
 
-            <button class="btn-add" onclick="openForm()">
+        <!-- THANH CÔNG CỤ -->
+        <section class="toolbar">
+
+            <div class="search-box">
+                <span>🔍</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Tìm kiếm theo mã hoặc tên danh mục..."
+                >
+            </div>
+
+            <button
+                type="button"
+                class="btn-add"
+                onclick="openAddForm()">
                 + Thêm danh mục
             </button>
+
         </section>
 
+
+        <!-- DANH SÁCH DANH MỤC -->
         <section class="table-container">
 
-            <h2>Danh sách danh mục</h2>
+            <div class="table-header">
+                <div>
+                    <h2>Danh sách danh mục</h2>
+                    <p>Thông tin các danh mục sản phẩm</p>
+                </div>
+            </div>
 
-            <p id="message"></p>
+            <p id="message" class="message"></p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mã DM</th>
-                        <th>Tên danh mục</th>
-                        <th>Mô tả</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã DM</th>
+                            <th>Tên danh mục</th>
+                            <th>Mô tả</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
 
-                <tbody id="categoryList">
-                    <tr>
-                        <td colspan="4">Đang tải dữ liệu...</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody id="categoryList">
+                        <tr>
+                            <td colspan="4" class="empty-data">
+                                Đang tải dữ liệu...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
         </section>
 
-    </div>
+    </main>
 
-    <!-- Form thêm danh mục -->
+
+    <!-- MODAL THÊM / SỬA DANH MỤC -->
     <div id="categoryModal" class="modal">
 
         <div class="modal-content">
 
+            <!-- TIÊU ĐỀ MODAL -->
             <div class="modal-header">
-                <h2>Thêm danh mục</h2>
-                <button class="btn-close" onclick="closeForm()">×</button>
+
+                <div>
+                    <h2>THÊM DANH MỤC</h2>
+                    <p>Nhập đầy đủ thông tin danh mục</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    onclick="closeForm()">
+                    ×
+                </button>
+
             </div>
 
+
+            <!-- FORM -->
             <form id="categoryForm">
 
-                <label>Tên danh mục</label>
-                <input type="text" id="tenDM" required>
+                <div class="form-grid">
 
-                <label>Mô tả</label>
-                <textarea id="moTa"></textarea>
+                    <div class="form-group full-width">
+                        <label for="tenDM">
+                            Tên danh mục <span>*</span>
+                        </label>
 
-                <button type="submit" class="btn-save">
-                    Lưu danh mục
-                </button>
+                        <input
+                            type="text"
+                            id="tenDM"
+                            placeholder="Nhập tên danh mục"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="form-group full-width">
+                        <label for="moTa">
+                            Mô tả danh mục
+                        </label>
+
+                        <textarea
+                            id="moTa"
+                            rows="4"
+                            placeholder="Nhập mô tả danh mục..."
+                        ></textarea>
+                    </div>
+
+                </div>
+
+
+                <!-- NÚT CHỨC NĂNG -->
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        onclick="closeForm()">
+                        Hủy
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+                        Lưu danh mục
+                    </button>
+
+                </div>
 
             </form>
 
@@ -103,6 +205,8 @@
 
     </div>
 
+
+    <!-- JAVASCRIPT -->
     <script src="js/auth.js"></script>
     <script src="js/danhmuc.js"></script>
 

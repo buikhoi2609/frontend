@@ -4,6 +4,9 @@ const API_URL = "http://localhost:8081/api/sanpham";
 // Chưa đăng nhập thì đẩy về trang login ngay
 requireAuth();
 
+// Lưu mã sản phẩm đang sửa
+let editingProductId = null;
+
 // Hiển thị tên người dùng đang đăng nhập + xử lý đăng xuất
 function initUserBox() {
     const user = getUser();
@@ -22,7 +25,7 @@ async function loadProducts() {
     const message = document.getElementById("message");
 
     productList.innerHTML =
-        '<tr><td colspan="9">Đang tải dữ liệu...</td></tr>';
+        '<tr><td colspan="9" class="empty-data">Đang tải dữ liệu...</td></tr>';
 
     message.textContent = "";
 
@@ -39,7 +42,7 @@ async function loadProducts() {
 
     } catch (error) {
         productList.innerHTML =
-            '<tr><td colspan="9">Không tải được dữ liệu</td></tr>';
+            '<tr><td colspan="9" class="empty-data">Không tải được dữ liệu</td></tr>';
 
         message.textContent =
             "Lỗi kết nối Backend: " + error.message;
@@ -52,7 +55,7 @@ function displayProducts(products) {
 
     if (products.length === 0) {
         productList.innerHTML =
-            '<tr><td colspan="9">Chưa có sản phẩm nào</td></tr>';
+            '<tr><td colspan="9" class="empty-data">Chưa có sản phẩm nào</td></tr>';
         return;
     }
 
@@ -85,33 +88,32 @@ function displayProducts(products) {
             row.appendChild(cell);
         });
 
-const actionCell = document.createElement("td");
+        const actionCell = document.createElement("td");
 
-// Nút Sửa
-const editButton = document.createElement("button");
-editButton.textContent = "Sửa";
-editButton.className = "btn-edit";
+        // Nút Sửa
+        const editButton = document.createElement("button");
+        editButton.textContent = "Sửa";
+        editButton.className = "btn-edit";
 
-editButton.addEventListener("click", () => {
-    editProduct(product.maSP);
-});
+        editButton.addEventListener("click", () => {
+            editProduct(product.maSP);
+        });
 
-// Nút Xóa
-const deleteButton = document.createElement("button");
-deleteButton.textContent = "Xóa";
-deleteButton.className = "btn-delete";
+        // Nút Xóa
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Xóa";
+        deleteButton.className = "btn-delete";
 
-deleteButton.addEventListener("click", () => {
-    deleteProduct(product.maSP);
-});
+        deleteButton.addEventListener("click", () => {
+            deleteProduct(product.maSP);
+        });
 
-actionCell.appendChild(editButton);
-actionCell.appendChild(deleteButton);
+        actionCell.appendChild(editButton);
+        actionCell.appendChild(deleteButton);
 
-row.appendChild(actionCell);
+        row.appendChild(actionCell);
 
-// Lưu mã sản phẩm đang sửa
-let editingProductId = null;
+        productList.appendChild(row);
     });
 }
 
