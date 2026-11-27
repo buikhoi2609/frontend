@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý danh mục</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>THUY TUAN STORE</h2>
+
+        <ul>
+            <li onclick="location.href='index.html'">Quản lý sản phẩm</li>
+            <li class="active" onclick="location.href='danhmuc.html'">Quản lý danh mục</li>
+            <li onclick="location.href='nhacungcap.html'">Quản lý nhà cung cấp</li>
+            <li onclick="location.href='donhang.html'">Quản lý đơn hàng</li>
+        </ul>
+    </div>
+
+    <div class="main">
+
+        <header class="header-top">
+            <div>
+                <h1>Quản lý danh mục</h1>
+                <p>Hệ thống quản lý bán hàng cửa hàng đồ gia dụng</p>
+            </div>
+
+            <div class="user-box">
+                <span id="userName"></span>
+                <button type="button" class="btn-logout" id="btnLogout">Đăng xuất</button>
+            </div>
+        </header>
+
+        <section class="toolbar">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Tìm kiếm danh mục..."
+            >
+
+            <button class="btn-add" onclick="openForm()">
+                + Thêm danh mục
+            </button>
+        </section>
+
+        <section class="table-container">
+
+            <h2>Danh sách danh mục</h2>
+
+            <p id="message"></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã DM</th>
+                        <th>Tên danh mục</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="categoryList">
+                    <tr>
+                        <td colspan="4">Đang tải dữ liệu...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+    </div>
+
+    <!-- Form thêm danh mục -->
+    <div id="categoryModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2>Thêm danh mục</h2>
+                <button class="btn-close" onclick="closeForm()">×</button>
+            </div>
+
+            <form id="categoryForm">
+
+                <label>Tên danh mục</label>
+                <input type="text" id="tenDM" required>
+
+                <label>Mô tả</label>
+                <textarea id="moTa"></textarea>
+
+                <button type="submit" class="btn-save">
+                    Lưu danh mục
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/danhmuc.js"></script>
+
+</body>
+</html>
