@@ -60,6 +60,34 @@ header h1 {
     margin-bottom: 10px;
 }
 
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+#userName {
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.btn-logout {
+    background: #64748b;
+    color: white;
+}
+
+.btn-logout:hover {
+    background: #475569;
+}
+
 /* Toolbar */
 
 .toolbar {

@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Quản lý bán hàng</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body class="auth-body">
+
+    <div class="auth-card">
+        <h2>THUY TUAN STORE</h2>
+
+        <div class="auth-tabs">
+            <button type="button" class="auth-tab active" data-tab="login">Đăng nhập</button>
+            <button type="button" class="auth-tab" data-tab="register">Đăng ký</button>
+        </div>
+
+        <p id="authMessage" class="auth-message"></p>
+
+        <form id="loginForm" class="auth-form">
+            <label>Tài khoản</label>
+            <input type="text" id="loginTaiKhoan" required autocomplete="username">
+
+            <label>Mật khẩu</label>
+            <input type="password" id="loginMatKhau" required autocomplete="current-password">
+
+            <button type="submit" class="btn-save">Đăng nhập</button>
+        </form>
+
+        <form id="registerForm" class="auth-form" style="display:none;">
+            <label>Họ tên</label>
+            <input type="text" id="registerHoTen">
+
+            <label>Số điện thoại</label>
+            <input type="text" id="registerDienThoai">
+
+            <label>Email</label>
+            <input type="email" id="registerEmail">
+
+            <label>Tài khoản</label>
+            <input type="text" id="registerTaiKhoan" required autocomplete="username">
+
+            <label>Mật khẩu</label>
+            <input type="password" id="registerMatKhau" required autocomplete="new-password">
+
+            <button type="submit" class="btn-save">Đăng ký</button>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/login.js"></script>
+
+</body>
+</html>

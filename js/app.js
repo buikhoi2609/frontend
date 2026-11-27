@@ -1,6 +1,21 @@
 
 const API_URL = "http://localhost:8081/api/sanpham";
 
+// Chưa đăng nhập thì đẩy về trang login ngay
+requireAuth();
+
+// Hiển thị tên người dùng đang đăng nhập + xử lý đăng xuất
+function initUserBox() {
+    const user = getUser();
+    const userName = document.getElementById("userName");
+
+    if (user) {
+        userName.textContent = `Xin chào, ${user.hoTen || user.taiKhoan}`;
+    }
+
+    document.getElementById("btnLogout").addEventListener("click", logout);
+}
+
 // Lấy danh sách sản phẩm từ Backend
 async function loadProducts() {
     const productList = document.getElementById("productList");
@@ -12,7 +27,7 @@ async function loadProducts() {
     message.textContent = "";
 
     try {
-        const response = await fetch(API_URL);
+        const response = await authFetch(API_URL);
 
         if (!response.ok) {
             throw new Error("Không thể lấy dữ liệu sản phẩm");
@@ -127,7 +142,7 @@ document.getElementById("productForm")
         };
 
         try {
-            const response = await fetch(API_URL, {
+            const response = await authFetch(API_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -161,7 +176,7 @@ async function deleteProduct(id) {
     if (!confirmDelete) return;
 
     try {
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await authFetch(`${API_URL}/${id}`, {
             method: "DELETE"
         });
 
@@ -185,7 +200,7 @@ document.getElementById("searchInput")
         const keyword = this.value.toLowerCase().trim();
 
         try {
-            const response = await fetch(API_URL);
+            const response = await authFetch(API_URL);
 
             if (!response.ok) {
                 throw new Error("Không thể tìm kiếm sản phẩm");
@@ -207,4 +222,7 @@ document.getElementById("searchInput")
     });
 
 // Tự động tải danh sách khi mở trang
-document.addEventListener("DOMContentLoaded", loadProducts);
+document.addEventListener("DOMContentLoaded", function () {
+    initUserBox();
+    loadProducts();
+});
