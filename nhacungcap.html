@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý nhà cung cấp</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>THUY TUAN STORE</h2>
+
+        <ul>
+            <li onclick="location.href='index.html'">Quản lý sản phẩm</li>
+            <li>Quản lý danh mục</li>
+            <li class="active" onclick="location.href='nhacungcap.html'">Quản lý nhà cung cấp</li>
+            <li>Quản lý đơn hàng</li>
+        </ul>
+    </div>
+
+    <div class="main">
+
+        <header class="header-top">
+            <div>
+                <h1>Quản lý nhà cung cấp</h1>
+                <p>Hệ thống quản lý bán hàng cửa hàng đồ gia dụng</p>
+            </div>
+
+            <div class="user-box">
+                <span id="userName"></span>
+                <button type="button" class="btn-logout" id="btnLogout">Đăng xuất</button>
+            </div>
+        </header>
+
+        <section class="toolbar">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Tìm kiếm nhà cung cấp..."
+            >
+
+            <button class="btn-add" onclick="openForm()">
+                + Thêm nhà cung cấp
+            </button>
+        </section>
+
+        <section class="table-container">
+
+            <h2>Danh sách nhà cung cấp</h2>
+
+            <p id="message"></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã NCC</th>
+                        <th>Tên nhà cung cấp</th>
+                        <th>Điện thoại</th>
+                        <th>Email</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="supplierList">
+                    <tr>
+                        <td colspan="7">Đang tải dữ liệu...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+    </div>
+
+    <!-- Form thêm nhà cung cấp -->
+    <div id="supplierModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2>Thêm nhà cung cấp</h2>
+                <button class="btn-close" onclick="closeForm()">×</button>
+            </div>
+
+            <form id="supplierForm">
+
+                <label>Tên nhà cung cấp</label>
+                <input type="text" id="tenNCC" required>
+
+                <label>Điện thoại</label>
+                <input type="text" id="dienThoai">
+
+                <label>Email</label>
+                <input type="email" id="email">
+
+                <label>Địa chỉ</label>
+                <textarea id="diaChi"></textarea>
+
+                <button type="submit" class="btn-save">
+                    Lưu nhà cung cấp
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/nhacungcap.js"></script>
+
+</body>
+</html>
