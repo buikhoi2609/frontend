@@ -4,127 +4,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý bán hàng</title>
+
+    <title>Quản lý sản phẩm - Thuy Tuan Store</title>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <div class="sidebar">
-        <h2>THUY TUAN STORE</h2>
+    <!-- THANH MENU -->
+    <aside class="sidebar">
+        <div class="brand">
+            <h2>THUY TUAN STORE</h2>
+            <p>Hệ thống quản lý bán hàng</p>
+        </div>
 
-        <ul>
-            <li class="active" onclick="location.href='index.html'">Quản lý sản phẩm</li>
-            <li onclick="location.href='danhmuc.html'">Quản lý danh mục</li>
-            <li onclick="location.href='nhacungcap.html'">Quản lý nhà cung cấp</li>
-            <li onclick="location.href='donhang.html'">Quản lý đơn hàng</li>
+        <ul class="menu">
+            <li class="active"
+                onclick="location.href='index.html'">
+                <span>📦</span> Quản lý sản phẩm
+            </li>
+
+            <li onclick="location.href='danhmuc.html'">
+                <span>📂</span> Quản lý danh mục
+            </li>
+
+            <li onclick="location.href='nhacungcap.html'">
+                <span>🏭</span> Quản lý nhà cung cấp
+            </li>
+
+            <li onclick="location.href='donhang.html'">
+                <span>🧾</span> Quản lý đơn hàng
+            </li>
         </ul>
-    </div>
+    </aside>
 
-    <div class="main">
 
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="main">
+
+        <!-- HEADER -->
         <header class="header-top">
-            <div>
+            <div class="header-title">
                 <h1>Quản lý sản phẩm</h1>
-                <p>Hệ thống quản lý bán hàng cửa hàng đồ gia dụng</p>
+                <p>Quản lý thông tin và hàng tồn kho</p>
             </div>
 
             <div class="user-box">
-                <span id="userName"></span>
-                <button type="button" class="btn-logout" id="btnLogout">Đăng xuất</button>
+                <span id="userName">Xin chào!</span>
+
+                <button
+                    type="button"
+                    class="btn-logout"
+                    id="btnLogout">
+                    Đăng xuất
+                </button>
             </div>
         </header>
 
-        <section class="toolbar">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Tìm kiếm sản phẩm..."
-            >
 
-            <button class="btn-add" onclick="openForm()">
+        <!-- THANH CÔNG CỤ -->
+        <section class="toolbar">
+
+            <div class="search-box">
+                <span>🔍</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..."
+                >
+            </div>
+
+            <button
+                type="button"
+                class="btn-add"
+                onclick="openAddForm()">
                 + Thêm sản phẩm
             </button>
+
         </section>
 
+
+        <!-- DANH SÁCH SẢN PHẨM -->
         <section class="table-container">
 
-            <h2>Danh sách sản phẩm</h2>
+            <div class="table-header">
+                <div>
+                    <h2>Danh sách sản phẩm</h2>
+                    <p>Thông tin các sản phẩm trong cửa hàng</p>
+                </div>
+            </div>
 
-            <p id="message"></p>
+            <p id="message" class="message"></p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mã SP</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Mã DM</th>
-                        <th>Đơn vị</th>
-                        <th>Giá nhập</th>
-                        <th>Giá bán</th>
-                        <th>Số lượng</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã SP</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Mã DM</th>
+                            <th>Đơn vị</th>
+                            <th>Giá nhập</th>
+                            <th>Giá bán</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
 
-                <tbody id="productList">
-                    <tr>
-                        <td colspan="9">Đang tải dữ liệu...</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody id="productList">
+                        <tr>
+                            <td colspan="9" class="empty-data">
+                                Đang tải dữ liệu...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
         </section>
 
-    </div>
+    </main>
 
-    <!-- Form thêm sản phẩm -->
+
+    <!-- MODAL THÊM / SỬA SẢN PHẨM -->
     <div id="productModal" class="modal">
 
         <div class="modal-content">
 
+            <!-- TIÊU ĐỀ MODAL -->
             <div class="modal-header">
-                <h2>Thêm sản phẩm</h2>
-                <button class="btn-close" onclick="closeForm()">×</button>
+
+                <div>
+                    <h2>THÊM SẢN PHẨM</h2>
+                    <p>Nhập đầy đủ thông tin sản phẩm</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    onclick="closeForm()">
+                    ×
+                </button>
+
             </div>
 
+
+            <!-- FORM -->
             <form id="productForm">
 
-                <label>Tên sản phẩm</label>
-                <input type="text" id="tenSP" required>
+                <div class="form-grid">
 
-                <label>Mã danh mục</label>
-                <input type="number" id="maDM" min="1" required>
+                    <div class="form-group full-width">
+                        <label for="tenSP">
+                            Tên sản phẩm <span>*</span>
+                        </label>
 
-                <label>Mã nhà cung cấp</label>
-                <input type="number" id="maNCC" min="1">
+                        <input
+                            type="text"
+                            id="tenSP"
+                            placeholder="Nhập tên sản phẩm"
+                            required
+                        >
+                    </div>
 
-                <label>Đơn vị tính</label>
-                <input type="text" id="donViTinh">
 
-                <label>Giá nhập</label>
-                <input type="number" id="giaNhap" min="0" step="0.01" required>
+                    <div class="form-group">
+                        <label for="maDM">
+                            Mã danh mục <span>*</span>
+                        </label>
 
-                <label>Giá bán</label>
-                <input type="number" id="giaBan" min="0" step="0.01" required>
+                        <input
+                            type="number"
+                            id="maDM"
+                            min="1"
+                            placeholder="Nhập mã danh mục"
+                            required
+                        >
+                    </div>
 
-                <label>Số lượng tồn</label>
-                <input type="number" id="soLuongTon" min="0" required>
 
-                <label>Số lượng cảnh báo</label>
-                <input type="number" id="soLuongCanhBao" min="0">
+                    <div class="form-group">
+                        <label for="maNCC">
+                            Mã nhà cung cấp
+                        </label>
 
-                <label>Hình ảnh (đường dẫn)</label>
-                <input type="text" id="hinhAnh">
+                        <input
+                            type="number"
+                            id="maNCC"
+                            min="1"
+                            placeholder="Nhập mã nhà cung cấp"
+                        >
+                    </div>
 
-                <label>Mô tả</label>
-                <textarea id="moTa"></textarea>
 
-                <button type="submit" class="btn-save">
-                    Lưu sản phẩm
-                </button>
+                    <div class="form-group">
+                        <label for="donViTinh">
+                            Đơn vị tính
+                        </label>
+
+                        <input
+                            type="text"
+                            id="donViTinh"
+                            placeholder="Ví dụ: Cái, Chiếc, Bộ"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="soLuongTon">
+                            Số lượng tồn <span>*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            id="soLuongTon"
+                            min="0"
+                            step="1"
+                            placeholder="Nhập số lượng"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="giaNhap">
+                            Giá nhập (VNĐ) <span>*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            id="giaNhap"
+                            min="0"
+                            step="0.01"
+                            placeholder="Nhập giá nhập"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="giaBan">
+                            Giá bán (VNĐ) <span>*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            id="giaBan"
+                            min="0"
+                            step="0.01"
+                            placeholder="Nhập giá bán"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="soLuongCanhBao">
+                            Số lượng cảnh báo
+                        </label>
+
+                        <input
+                            type="number"
+                            id="soLuongCanhBao"
+                            min="0"
+                            step="1"
+                            placeholder="Nhập số lượng cảnh báo"
+                        >
+                    </div>
+
+
+                    <div class="form-group full-width">
+                        <label for="hinhAnh">
+                            Hình ảnh (đường dẫn)
+                        </label>
+
+                        <input
+                            type="text"
+                            id="hinhAnh"
+                            placeholder="Nhập đường dẫn hình ảnh"
+                        >
+                    </div>
+
+
+                    <div class="form-group full-width">
+                        <label for="moTa">
+                            Mô tả sản phẩm
+                        </label>
+
+                        <textarea
+                            id="moTa"
+                            rows="4"
+                            placeholder="Nhập mô tả sản phẩm..."
+                        ></textarea>
+                    </div>
+
+                </div>
+
+
+                <!-- NÚT CHỨC NĂNG -->
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        onclick="closeForm()">
+                        Hủy
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+                        Lưu sản phẩm
+                    </button>
+
+                </div>
 
             </form>
 
@@ -132,6 +328,8 @@
 
     </div>
 
+
+    <!-- JAVASCRIPT -->
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
 
