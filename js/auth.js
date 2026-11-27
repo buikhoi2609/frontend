@@ -25,8 +25,21 @@ function clearSession() {
     localStorage.removeItem(USER_KEY);
 }
 
-function logout() {
+async function logout() {
+    const token = getToken();
     clearSession();
+
+    if (token) {
+        try {
+            await fetch(`${AUTH_API_URL}/logout`, {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + token }
+            });
+        } catch (error) {
+            // Mất kết nối Backend khi đăng xuất: vẫn tiếp tục xóa phiên ở trình duyệt
+        }
+    }
+
     window.location.href = "login.html";
 }
 
